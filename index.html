@@ -126,255 +126,128 @@
   </div>
 
   <script>
-  // -------------------------
-  // MATERIALS DATA (MVP MOCK)
-  // Origin: ranked trends from a public selector guide (tensile, flex modulus, impact, dielectric,
-  // FDA availability, chemical resistance, families) + typical extrusion usage. Replace/extend per supplier datasheets.
-  // -------------------------
-  const materials = [
-    {
-      name: "HDPE", family: "Semicrystalline",
-      cost: 1, tempHDT: 75, fda: true, chemical: true, transparent: false,
-      impactRank: 7, stiffRank: 4, tensileRank: 3, dielectricRank: 6,
-      wear: false, electrical: true, uv: false,
-      forms:["profile","tubing","sheet"],
-      notes: "Good chemical resistance, low cost, easy extrusion; moderate stiffness.",
-    },
-    {
-      name: "LDPE", family: "Semicrystalline",
-      cost: 1, tempHDT: 60, fda: true, chemical: true, transparent: false,
-      impactRank: 6, stiffRank: 1, tensileRank: 1, dielectricRank: 6,
-      wear: false, electrical: true, uv: false,
-      forms:["sheet","film","tubing"],
-      notes: "Flexible, low modulus; films, liners, wire & cable jacketing.",
-    },
-    {
-      name: "Polypropylene (PP)", family: "Semicrystalline",
-      cost: 1, tempHDT: 100, fda: true, chemical: true, transparent: false,
-      impactRank: 5, stiffRank: 5, tensileRank: 3, dielectricRank: 5,
-      wear: false, electrical: true, uv: false,
-      forms:["profile","tubing","sheet"],
-      notes: "Excellent chemical resistance; homopolymer is stiffer, copolymer tougher.",
-    },
-    {
-      name: "Acetal (POM)", family: "Semicrystalline",
-      cost: 2, tempHDT: 110, fda: true, chemical: true, transparent: false,
-      impactRank: 3, stiffRank: 6, tensileRank: 5, dielectricRank: 6,
-      wear: true, electrical: true, uv: false,
-      forms:["profile"],
-      notes: "Low friction, good wear; dimensionally stable; good for bearing-like extrusions.",
-    },
-    {
-      name: "Nylon 6/6", family: "Semicrystalline",
-      cost: 2, tempHDT: 120, fda: true, chemical: true, transparent: false,
-      impactRank: 3, stiffRank: 6, tensileRank: 6, dielectricRank: 4,
-      wear: true, electrical: true, uv: false,
-      forms:["profile","tubing"],
-      notes: "Strong, good fatigue; moisture sensitive; wear capable.",
-    },
-    {
-      name: "UHMW-PE", family: "Semicrystalline",
-      cost: 2, tempHDT: 80, fda: true, chemical: true, transparent: false,
-      impactRank: 8, stiffRank: 2, tensileRank: 1, dielectricRank: 5,
-      wear: true, electrical: true, uv: false,
-      forms:["profile","sheet"],
-      notes: "Very high impact and abrasion resistance; low coefficient of friction.",
-    },
-    {
-      name: "PETG", family: "Amorphous",
-      cost: 2, tempHDT: 70, fda: true, chemical: false, transparent: true,
-      impactRank: 4, stiffRank: 5, tensileRank: 3, dielectricRank: 5,
-      wear: false, electrical: true, uv: false,
-      forms:["sheet"],
-      notes: "Clear, formable; indoor covers, guards; moderate impact.",
-    },
-    {
-      name: "Acrylic (PMMA)", family: "Amorphous",
-      cost: 2, tempHDT: 95, fda: true, chemical: false, transparent: true,
-      impactRank: 2, stiffRank: 6, tensileRank: 4, dielectricRank: 6,
-      wear: false, electrical: true, uv: true,
-      forms:["sheet","profile"],
-      notes: "Excellent clarity and UV; brittle vs PC; outdoor signage, glazing.",
-    },
-    {
-      name: "Polycarbonate (PC)", family: "Amorphous",
-      cost: 3, tempHDT: 130, fda: true, chemical: false, transparent: true,
-      impactRank: 7, stiffRank: 5, tensileRank: 4, dielectricRank: 4,
-      wear: false, electrical: true, uv: false,
-      forms:["sheet","profile"],
-      notes: "Very high impact; clear; needs UV stabilization outdoors.",
-    },
-    {
-      name: "PVC (rigid)", family: "Amorphous",
-      cost: 1, tempHDT: 70, fda: true, chemical: fair, transparent: false,
-      impactRank: 3, stiffRank: 6, tensileRank: 3, dielectricRank: 4,
-      wear: false, electrical: true, uv: true,
-      forms:["profile","tubing"],
-      notes: "Good stiffness and processability; building profiles, conduit, window frames.",
-    },
-    {
-      name: "PBT", family: "Semicrystalline",
-      cost: 2, tempHDT: 120, fda: true, chemical: true, transparent: false,
-      impactRank: 3, stiffRank: 5, tensileRank: 4, dielectricRank: 4,
-      wear: false, electrical: true, uv: false,
-      forms:["profile"],
-      notes: "Good electrical properties and chemical resistance; connectors, clips.",
-    },
-    {
-      name: "PET", family: "Semicrystalline",
-      cost: 1, tempHDT: 115, fda: true, chemical: true, transparent: false,
-      impactRank: 2, stiffRank: 5, tensileRank: 4, dielectricRank: 4,
-      wear: false, electrical: true, uv: false,
-      forms:["sheet","film"],
-      notes: "Bottles (injection stretch blow), films; in sheet/film extrusion good stiffness.",
-    },
-    {
-      name: "PVDF", family: "Semicrystalline",
-      cost: 4, tempHDT: 140, fda: true, chemical: true, transparent: false,
-      impactRank: 3, stiffRank: 5, tensileRank: 4, dielectricRank: 3,
-      wear: false, electrical: true, uv: true,
-      forms:["tubing","sheet"],
-      notes: "Chemical processing, semi‑con; excellent chemical & weathering; pricey.",
-    },
-    {
-      name: "PTFE", family: "Semicrystalline",
-      cost: 5, tempHDT: 200, fda: true, chemical: true, transparent: false,
-      impactRank: 3, stiffRank: 1, tensileRank: 1, dielectricRank: 5,
-      wear: true, electrical: true, uv: true,
-      forms:["tubing"],
-      notes: "Outstanding chemical resistance and high temp; low friction; difficult to process.",
-    },
-    {
-      name: "PEEK", family: "Semicrystalline",
-      cost: 5, tempHDT: 250, fda: true, chemical: true, transparent: false,
-      impactRank: 4, stiffRank: 6, tensileRank: 7, dielectricRank: 4,
-      wear: true, electrical: true, uv: true,
-      forms:["profile","tubing"],
-      notes: "High temp, high strength, wear capable; premium cost; aerospace/medical/semicon.",
-    },
-    {
-      name: "PPS", family: "Semicrystalline",
-      cost: 4, tempHDT: 220, fda: false, chemical: true, transparent: false,
-      impactRank: 2, stiffRank: 6, tensileRank: 6, dielectricRank: 4,
-      wear: true, electrical: true, uv: true,
-      forms:["profile"],
-      notes: "High temp and chemical resistance; electrical components; limited transparency.",
-    },
-    {
-      name: "ABS", family: "Amorphous",
-      cost: 1, tempHDT: 95, fda: true, chemical: false, transparent: false,
-      impactRank: 5, stiffRank: 4, tensileRank: 3, dielectricRank: 4,
-      wear: false, electrical: true, uv: false,
-      forms:["profile"],
-      notes: "Good impact, easy to extrude, interior trims; poor solvent resistance vs semicrystalline.",
-    }
-  ];
+  // Guard until DOM is ready
+  document.addEventListener('DOMContentLoaded', () => {
+    // -------------------------
+    // MATERIALS DATA (MVP MOCK)
+    // -------------------------
+    const materials = [
+      { name: "HDPE", family: "Semicrystalline", cost: 1, tempHDT: 75, fda: true, chemical: true, transparent: false, impactRank: 7, stiffRank: 4, tensileRank: 3, dielectricRank: 6, wear: false, electrical: true, uv: false, forms:["profile","tubing","sheet"], notes: "Good chemical resistance, low cost, easy extrusion; moderate stiffness." },
+      { name: "LDPE", family: "Semicrystalline", cost: 1, tempHDT: 60, fda: true, chemical: true, transparent: false, impactRank: 6, stiffRank: 1, tensileRank: 1, dielectricRank: 6, wear: false, electrical: true, uv: false, forms:["sheet","film","tubing"], notes: "Flexible, low modulus; films, liners, wire & cable jacketing." },
+      { name: "Polypropylene (PP)", family: "Semicrystalline", cost: 1, tempHDT: 100, fda: true, chemical: true, transparent: false, impactRank: 5, stiffRank: 5, tensileRank: 3, dielectricRank: 5, wear: false, electrical: true, uv: false, forms:["profile","tubing","sheet"], notes: "Excellent chemical resistance; homopolymer is stiffer, copolymer tougher." },
+      { name: "Acetal (POM)", family: "Semicrystalline", cost: 2, tempHDT: 110, fda: true, chemical: true, transparent: false, impactRank: 3, stiffRank: 6, tensileRank: 5, dielectricRank: 6, wear: true, electrical: true, uv: false, forms:["profile"], notes: "Low friction, good wear; dimensionally stable; good for bearing-like extrusions." },
+      { name: "Nylon 6/6", family: "Semicrystalline", cost: 2, tempHDT: 120, fda: true, chemical: true, transparent: false, impactRank: 3, stiffRank: 6, tensileRank: 6, dielectricRank: 4, wear: true, electrical: true, uv: false, forms:["profile","tubing"], notes: "Strong, good fatigue; moisture sensitive; wear capable." },
+      { name: "UHMW-PE", family: "Semicrystalline", cost: 2, tempHDT: 80, fda: true, chemical: true, transparent: false, impactRank: 8, stiffRank: 2, tensileRank: 1, dielectricRank: 5, wear: true, electrical: true, uv: false, forms:["profile","sheet"], notes: "Very high impact and abrasion resistance; low coefficient of friction." },
+      { name: "PETG", family: "Amorphous", cost: 2, tempHDT: 70, fda: true, chemical: false, transparent: true, impactRank: 4, stiffRank: 5, tensileRank: 3, dielectricRank: 5, wear: false, electrical: true, uv: false, forms:["sheet"], notes: "Clear, formable; indoor covers, guards; moderate impact." },
+      { name: "Acrylic (PMMA)", family: "Amorphous", cost: 2, tempHDT: 95, fda: true, chemical: false, transparent: true, impactRank: 2, stiffRank: 6, tensileRank: 4, dielectricRank: 6, wear: false, electrical: true, uv: true, forms:["sheet","profile"], notes: "Excellent clarity and UV; brittle vs PC; outdoor signage, glazing." },
+      { name: "Polycarbonate (PC)", family: "Amorphous", cost: 3, tempHDT: 130, fda: true, chemical: false, transparent: true, impactRank: 7, stiffRank: 5, tensileRank: 4, dielectricRank: 4, wear: false, electrical: true, uv: false, forms:["sheet","profile"], notes: "Very high impact; clear; needs UV stabilization outdoors." },
+      { name: "PVC (rigid)", family: "Amorphous", cost: 1, tempHDT: 70, fda: true, chemical: 'fair', transparent: false, impactRank: 3, stiffRank: 6, tensileRank: 3, dielectricRank: 4, wear: false, electrical: true, uv: true, forms:["profile","tubing"], notes: "Good stiffness and processability; building profiles, conduit, window frames." },
+      { name: "PBT", family: "Semicrystalline", cost: 2, tempHDT: 120, fda: true, chemical: true, transparent: false, impactRank: 3, stiffRank: 5, tensileRank: 4, dielectricRank: 4, wear: false, electrical: true, uv: false, forms:["profile"], notes: "Good electrical properties and chemical resistance; connectors, clips." },
+      { name: "PET", family: "Semicrystalline", cost: 1, tempHDT: 115, fda: true, chemical: true, transparent: false, impactRank: 2, stiffRank: 5, tensileRank: 4, dielectricRank: 4, wear: false, electrical: true, uv: false, forms:["sheet","film"], notes: "Bottles (injection stretch blow), films; in sheet/film extrusion good stiffness." },
+      { name: "PVDF", family: "Semicrystalline", cost: 4, tempHDT: 140, fda: true, chemical: true, transparent: false, impactRank: 3, stiffRank: 5, tensileRank: 4, dielectricRank: 3, wear: false, electrical: true, uv: true, forms:["tubing","sheet"], notes: "Chemical processing, semi‑con; excellent chemical & weathering; pricey." },
+      { name: "PTFE", family: "Semicrystalline", cost: 5, tempHDT: 200, fda: true, chemical: true, transparent: false, impactRank: 3, stiffRank: 1, tensileRank: 1, dielectricRank: 5, wear: true, electrical: true, uv: true, forms:["tubing"], notes: "Outstanding chemical resistance and high temp; low friction; difficult to process." },
+      { name: "PEEK", family: "Semicrystalline", cost: 5, tempHDT: 250, fda: true, chemical: true, transparent: false, impactRank: 4, stiffRank: 6, tensileRank: 7, dielectricRank: 4, wear: true, electrical: true, uv: true, forms:["profile","tubing"], notes: "High temp, high strength, wear capable; premium cost; aerospace/medical/semicon." },
+      { name: "PPS", family: "Semicrystalline", cost: 4, tempHDT: 220, fda: false, chemical: true, transparent: false, impactRank: 2, stiffRank: 6, tensileRank: 6, dielectricRank: 4, wear: true, electrical: true, uv: true, forms:["profile"], notes: "High temp and chemical resistance; electrical components; limited transparency." },
+      { name: "ABS", family: "Amorphous", cost: 1, tempHDT: 95, fda: true, chemical: false, transparent: false, impactRank: 5, stiffRank: 4, tensileRank: 3, dielectricRank: 4, wear: false, electrical: true, uv: false, forms:["profile"], notes: "Good impact, easy to extrude, interior trims; poor solvent resistance vs semicrystalline." }
+    ];
 
-  // Helpful tags for display
-  const tags = {
-    cost: v => v<=1?"$": v===2?"$$": v===3?"$$$": v===4?"$$$$":"$$$$$",
-    temp: v => v+"°C HDT (approx)",
-    family: v => v
-  };
-
-  // Simple weight mapping based on checkbox priorities
-  function scoreMaterial(m, prefs){
-    let s = 0; const why = [];
-
-    // Temperature capability
-    const needTemp = +prefs.temp;
-    if(m.tempHDT >= needTemp){ s += 15; why.push(`Meets temp need (≥ ${needTemp}°C)`)}
-    else { s -= 30; why.push(`Below temp need (< ${needTemp}°C)`) }
-
-    // Use cases
-    if(prefs.food && m.fda){ s+=8; why.push("FDA grades available") }
-    if(prefs.chemical && m.chemical){ s+=10; why.push("Good chemical resistance") }
-    if(prefs.electrical && m.electrical){ s+=6; why.push("Good dielectric properties") }
-    if(prefs.wear && m.wear){ s+=10; why.push("Suitable for bearing/wear") }
-    if(prefs.impact){ s += (m.impactRank>=6?8: m.impactRank>=4?4: 0); if(m.impactRank>=4) why.push("Higher impact toughness") }
-    if(prefs.stiff){ s += (m.stiffRank>=6?8: m.stiffRank>=4?4: 0); if(m.stiffRank>=4) why.push("Higher stiffness") }
-    if(prefs.lowcost){ s += (m.cost<=2?8: m.cost===3?3: 0); if(m.cost<=3) why.push("Cost favorable vs high‑performance resins") }
-    if(prefs.transparent){ s += (m.transparent?10:-8); why.push(m.transparent?"Transparent grades available":"Not transparent") }
-    if(prefs.uv){ s += (m.uv?5:-2); if(m.uv) why.push("Better UV/weathering options") }
-
-    // Part format preference (soft filter)
-    if(prefs.formats.length){
-      if(m.forms.some(f=>prefs.formats.includes(f))){ s+=4; why.push("Common for selected part format") }
-      else { s -= 4; why.push("Less common for selected format") }
-    }
-
-    return {score:s, why};
-  }
-
-  function collectPrefs(){
-    const use = Array.from(document.querySelectorAll('input[name="use"]:checked')).map(i=>i.value);
-    const temp = document.querySelector('input[name="temp"]:checked').value;
-    const formats = Array.from(document.querySelectorAll('input[name="format"]:checked')).map(i=>i.value);
-    return {
-      temp,
-      food: use.includes('food'),
-      chemical: use.includes('chemical'),
-      electrical: use.includes('electrical'),
-      wear: use.includes('wear'),
-      impact: use.includes('impact'),
-      stiff: use.includes('stiff'),
-      lowcost: use.includes('lowcost'),
-      transparent: use.includes('transparent'),
-      uv: use.includes('uv'),
-      formats
+    const tags = {
+      cost: v => v<=1?"$": v===2?"$$": v===3?"$$$": v===4?"$$$$":"$$$$$",
+      temp: v => v+"°C HDT (approx)",
+      family: v => v
     };
-  }
 
-  function render(){
-    const prefs = collectPrefs();
-    const ranked = materials.map(m=>({m, ...scoreMaterial(m,prefs)}))
-      .sort((a,b)=>b.score-a.score);
+    function scoreMaterial(m, prefs){
+      let s = 0; const why = [];
+      const needTemp = Number(prefs.temp || 80);
+      if(Number(m.tempHDT) >= needTemp){ s += 15; why.push(`Meets temp need (≥ ${needTemp}°C)`)} else { s -= 30; why.push(`Below temp need (< ${needTemp}°C)`) }
+      if(prefs.food && m.fda){ s+=8; why.push("FDA grades available") }
+      if(prefs.chemical && m.chemical===true){ s+=10; why.push("Good chemical resistance") }
+      if(prefs.electrical && m.electrical){ s+=6; why.push("Good dielectric properties") }
+      if(prefs.wear && m.wear){ s+=10; why.push("Suitable for bearing/wear") }
+      if(prefs.impact){ s += (m.impactRank>=6?8: m.impactRank>=4?4: 0); if(m.impactRank>=4) why.push("Higher impact toughness") }
+      if(prefs.stiff){ s += (m.stiffRank>=6?8: m.stiffRank>=4?4: 0); if(m.stiffRank>=4) why.push("Higher stiffness") }
+      if(prefs.lowcost){ s += (m.cost<=2?8: m.cost===3?3: 0); if(m.cost<=3) why.push("Cost favorable vs high‑performance resins") }
+      if(prefs.transparent){ s += (m.transparent?10:-8); why.push(m.transparent?"Transparent grades available":"Not transparent") }
+      if(prefs.uv){ s += (m.uv?5:-2); if(m.uv) why.push("Better UV/weathering options") }
+      if(prefs.formats && prefs.formats.length){
+        if((m.forms||[]).some(f=>prefs.formats.includes(f))){ s+=4; why.push("Common for selected part format") } else { s -= 4; why.push("Less common for selected format") }
+      }
+      return {score:s, why};
+    }
 
-    const results = document.getElementById('results');
-    results.innerHTML = '';
+    function collectPrefs(){
+      const use = Array.from(document.querySelectorAll('input[name="use"]:checked')).map(i=>i.value);
+      const tempEl = document.querySelector('input[name="temp"]:checked');
+      const temp = tempEl ? tempEl.value : '80';
+      const formats = Array.from(document.querySelectorAll('input[name="format"]:checked')).map(i=>i.value);
+      return {
+        temp,
+        food: use.includes('food'),
+        chemical: use.includes('chemical'),
+        electrical: use.includes('electrical'),
+        wear: use.includes('wear'),
+        impact: use.includes('impact'),
+        stiff: use.includes('stiff'),
+        lowcost: use.includes('lowcost'),
+        transparent: use.includes('transparent'),
+        uv: use.includes('uv'),
+        formats
+      };
+    }
 
-    const top = ranked.slice(0,9);
-    top.forEach(({m,score,why})=>{
-      const el = document.createElement('div');
-      el.className = 'mat';
-      el.innerHTML = `
-        <h3>${m.name}</h3>
-        <div class="badges">
-          <span class="badge">${tags.family(m.family)}</span>
-          <span class="badge">Cost: ${tags.cost(m.cost)}</span>
-          <span class="badge">${tags.temp(m.tempHDT)}</span>
-          ${m.fda?'<span class="badge">FDA</span>':''}
-          ${m.chemical?'<span class="badge">Chem‑res</span>':''}
-          ${m.transparent?'<span class="badge">Transparent</span>':''}
-          ${m.wear?'<span class="badge">Wear</span>':''}
-          ${m.electrical?'<span class="badge">Electrical</span>':''}
-          ${m.uv?'<span class="badge">UV</span>':''}
-        </div>
-        <div class="score">Score: ${score}</div>
-        <div class="scale"><div class="bar" style="width:${Math.max(0, Math.min(100, 50 + score/3))}%"></div></div>
-        <details>
-          <summary>Why this showed up</summary>
-          <ul style="margin:6px 0 0 16px;color:#cbd5e1">${why.map(w=>`<li>${w}</li>`).join('')}</ul>
-        </details>
-        <div class="sub">Notes: ${m.notes}</div>
-      `;
-      results.appendChild(el);
-    });
+    function render(){
+      try{
+        const prefs = collectPrefs();
+        const ranked = materials.map(m=>({m, ...scoreMaterial(m,prefs)})).sort((a,b)=>b.score-a.score);
+        const results = document.getElementById('results');
+        const count = document.getElementById('count');
+        if(!results || !count){ console.error('Missing results/count container'); return; }
+        results.innerHTML = '';
+        ranked.slice(0,9).forEach(({m,score,why})=>{
+          const el = document.createElement('div');
+          el.className = 'mat';
+          el.innerHTML = `
+            <h3>${m.name}</h3>
+            <div class="badges">
+              <span class="badge">${m.family}</span>
+              <span class="badge">Cost: ${tags.cost(m.cost)}</span>
+              <span class="badge">${tags.temp(m.tempHDT)}</span>
+              ${m.fda?'<span class="badge">FDA</span>':''}
+              ${m.chemical===true?'<span class="badge">Chem‑res</span>':''}
+              ${m.transparent?'<span class="badge">Transparent</span>':''}
+              ${m.wear?'<span class="badge">Wear</span>':''}
+              ${m.electrical?'<span class="badge">Electrical</span>':''}
+              ${m.uv?'<span class="badge">UV</span>':''}
+            </div>
+            <div class="score">Score: ${score}</div>
+            <div class="scale"><div class="bar" style="width:${Math.max(0, Math.min(100, 50 + score/3))}%"></div></div>
+            <details>
+              <summary>Why this showed up</summary>
+              <ul style="margin:6px 0 0 16px;color:#cbd5e1">${why.map(w=>`<li>${w}</li>`).join('')}</ul>
+            </details>
+            <div class="sub">Notes: ${m.notes}</div>
+          `;
+          results.appendChild(el);
+        });
+        count.textContent = `${ranked.length} materials evaluated • showing top ${Math.min(9, ranked.length)} candidates`;
+      }catch(err){
+        console.error('Render error', err);
+        alert('Something went wrong. Open the console for details.');
+      }
+    }
 
-    document.getElementById('count').innerHTML = `${ranked.length} materials evaluated • showing top ${Math.min(9, ranked.length)} candidates`;
-  }
+    const goBtn = document.getElementById('go');
+    const resetBtn = document.getElementById('reset');
+    if(goBtn){ goBtn.addEventListener('click', (e)=>{ e.preventDefault(); render(); }); }
+    if(resetBtn){ resetBtn.addEventListener('click', (e)=>{ e.preventDefault(); document.querySelectorAll('input[type="checkbox"]').forEach(i=>i.checked=false); const t=document.querySelector('input[name="temp"][value="80"]'); if(t) t.checked=true; const r=document.getElementById('results'); if(r) r.innerHTML=''; const c=document.getElementById('count'); if(c) c.textContent='Select criteria and click Find candidates.'; }); }
 
-  document.getElementById('go').addEventListener('click', render);
-  document.getElementById('reset').addEventListener('click', ()=>{
-    document.querySelectorAll('input[type="checkbox"]').forEach(i=>i.checked=false);
-    document.querySelector('input[name="temp"][value="80"]').checked = true;
-    document.getElementById('results').innerHTML='';
-    document.getElementById('count').textContent = 'Select criteria and click Find candidates.';
+    // Live-update preview and allow editing reference
+    const dataPreview = document.getElementById('dataPreview');
+    if(dataPreview){ dataPreview.textContent = `// Edit the array to tune the tool — then redeploy
+const materials = ${JSON.stringify(materials, null, 2)}`; }
+    console.log('Material Selector MVP ready');
   });
-
-  // Show a preview of the data for easy editing in-place
-  document.getElementById('dataPreview').textContent = 
-    `// Edit the array to tune the tool — then redeploy\nconst materials = ${JSON.stringify(materials, null, 2)}`;
-  </script>
+</script>
 </body>
 </html>
